@@ -1,6 +1,6 @@
-# A template for creating Hibernate+JavaFX+H2+JUnit projects 
+# RidesFX: a JavaFX (modular+hibernate+h2+properties) desktop application project 
 
-A JavaFX+Hibernate+H2+JUnit template for the Software Engineering class of the Faculty of Computer Science of Donostia. 
+A JavaFX+Hibernate+H2+JUnit template for the Software Engineering I class of the Faculty of Computer Science of Donostia. 
 
 
 * First, you need to create some Java POJO entities in the domain folder
