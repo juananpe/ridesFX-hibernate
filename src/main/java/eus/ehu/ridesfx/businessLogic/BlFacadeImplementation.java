@@ -11,16 +11,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
  * Implements the business logic as a web service.
  */
-@Path("/businessLogic")
+@Path("/api")
 public class BlFacadeImplementation implements BlFacade {
     DataAccess dbManager;
     Config config = Config.getInstance();
@@ -54,8 +51,19 @@ public class BlFacadeImplementation implements BlFacade {
         return ride;
     }
 
+    /**
+     * This method retrieves the rides from two locations on a given date
+     *
+     * @param origin      the origin location of a ride
+     * @param destination the destination location of a ride
+     * @param date        the date of the ride
+     * @return collection of rides
+     */
+    @GET
+    @Path("/getRides")
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
-    public List<Ride> getRides(String origin, String destination, Date date) {
+    public List<Ride> getRides(@QueryParam("origin") String origin, @QueryParam("destination") String destination, @QueryParam("date") Date date) {
         dbManager.open(false);
         List<Ride> events = dbManager.getRides(origin, destination, date);
         dbManager.close();
@@ -63,9 +71,6 @@ public class BlFacadeImplementation implements BlFacade {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Date> getThisMonthDatesWithRides(String from, String to, Date date) {
         dbManager.open(false);
@@ -74,14 +79,13 @@ public class BlFacadeImplementation implements BlFacade {
         return dates;
     }
 
-
     /**
      * This method invokes the data access to retrieve the dates a month for which there are events
      *
      * @param date of the month for which days with events want to be retrieved
      * @return collection of dates
      */
-
+    @Override
     public Vector<Date> getEventsMonth(Date date) {
         dbManager.open(false);
         Vector<Date> dates = dbManager.getEventsMonth(date);
@@ -89,13 +93,27 @@ public class BlFacadeImplementation implements BlFacade {
         return dates;
     }
 
+    // create a jersey endpoint
+    @POST
+    @Path("/setCurrentDriver")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Override
     public void setCurrentDriver(Driver driver) {
         this.currentDriver = driver;
+        System.out.println("Driver set: " + driver.getName() + " with Email: " + driver.getEmail());
     }
 
+    /**
+     * This method returns the current driver
+     *
+     * @return the current driver
+     */
+    @GET
+    @Path("/getCurrentDriver")
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Driver getCurrentDriver() {
+        System.out.println("Returning current driver: " + this.currentDriver.getName());
         return this.currentDriver;
     }
 
@@ -115,6 +133,15 @@ public class BlFacadeImplementation implements BlFacade {
     }
 
 
+    /**
+     * This method returns all the cities where rides depart
+     *
+     * @return collection of cities
+     */
+    @GET
+    @Path("/getDepartCities")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Override
     public List<String> getDepartCities() {
         dbManager.open(false);
 
@@ -126,19 +153,19 @@ public class BlFacadeImplementation implements BlFacade {
 
     }
 
-	/**
-	 * Retrieves a list of destination cities available from a specified city.
-	 *
-	 * <p>This method accesses the database to find all cities that can be reached directly
-	 * from the given 'from' city. It uses {@link DataAccess} to handle database operations.</p>
-	 *
-	 * @param from The city from which the destination cities are to be found.
-	 *             It's passed as a query parameter in the GET request.
-	 * @return A list of strings, each representing a destination city name.
-	 *         The list is returned as a JSON array.
-	 */
+    /**
+     * Retrieves a list of destination cities available from a specified city.
+     *
+     * <p>This method accesses the database to find all cities that can be reached directly
+     * from the given 'from' city. It uses {@link DataAccess} to handle database operations.</p>
+     *
+     * @param from The city from which the destination cities are to be found.
+     *             It's passed as a query parameter in the GET request.
+     * @return A list of strings, each representing a destination city name.
+     *         The list is returned as a JSON array.
+     */
 	@GET
-	@Path("/destinations")
+	@Path("/getDestinationCities")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public List<String> getDestinationCities(@QueryParam("from") String from) {
@@ -162,7 +189,7 @@ public class BlFacadeImplementation implements BlFacade {
 	 */
 	@Override
 	@GET
-	@Path("/dates")
+	@Path("/getDatesWithRides")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Date> getDatesWithRides(@QueryParam("from") String from, @QueryParam("to") String to) {
         dbManager.open(false);

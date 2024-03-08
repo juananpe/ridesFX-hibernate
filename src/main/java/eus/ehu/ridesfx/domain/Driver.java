@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement // Annotation needed for Jersey to handle XML and JSON conversion
 @Entity
 public class Driver implements Serializable {
 	
@@ -21,6 +24,7 @@ public class Driver implements Serializable {
 	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST)
 	private List<Ride> rides=new Vector<Ride>();
 
+	// No-arg constructor is required for JAXB
 	public Driver() {
 		super();
 	}
@@ -30,7 +34,12 @@ public class Driver implements Serializable {
 		this.name = name;
 	}
 	
-	
+	public Driver(String email, String name, List<Ride> rides) {
+		this.email = email;
+		this.name = name;
+		this.rides = rides;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -47,6 +56,13 @@ public class Driver implements Serializable {
 		this.name = name;
 	}
 
+	public List<Ride> getRides() {
+		return rides;
+	}
+
+	public void setRides(List<Ride> rides) {
+		this.rides = rides;
+	}
 	
 	
 	public String toString(){

@@ -1,5 +1,6 @@
 package eus.ehu.ridesfx.businessLogic;
 
+import eus.ehu.ridesfx.dataAccess.DataAccess;
 import eus.ehu.ridesfx.domain.Driver;
 import eus.ehu.ridesfx.domain.Ride;
 import eus.ehu.ridesfx.exceptions.RideAlreadyExistException;
@@ -60,12 +61,14 @@ public interface BlFacade {
     public List<String> getDepartCities();
 
     /**
-     * This method returns all the arrival destinations, from all rides that depart from a given city
+     * Retrieves a list of destination cities available from a specified city.
      *
-     * @param from the departure location of a ride
-     * @return all the arrival destinations
+     * <p>This method accesses the database to find all cities that can be reached directly
+     * from the given 'from' city.</p>
+     *
+     * @param from The city from which the destination cities are to be found.
+     * @return A list of strings, each representing a destination city name.
      */
-
     public List<String> getDestinationCities(String from);
 
 
